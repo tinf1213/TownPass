@@ -37,10 +37,10 @@ extension MyServiceIdExt on MyServiceItemId {
     return switch (this) {
        MyServiceItemId.dedicatedHistoryChat => MyServiceItem(
           title: '文化時空隧道',
-          description: '文化時空隧道',
-          icon: Assets.svg.icon1999phoneS.svg(),
+          description: '這是文化時空隧道',
+          icon: Assets.svg.iconTaipeiRadio.svg(),
           category: MyServiceCategory.cityService,
-          destinationUrl: 'https://hackmd.io/@tinf/rkOkoLooC',
+          destinationUrl: 'https://nuxt.com/',
         ),
       MyServiceItemId.dedicatedLine => MyServiceItem(
           title: '1999',

@@ -6,7 +6,9 @@
         android:label="Town Pass"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <!-- 啟用混合內容（如 HTTP 和 HTTPS 的混合使用） -->
         <activity
+            android:usesCleartextTraffic="true"
             android:name=".MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
