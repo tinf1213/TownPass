@@ -17,9 +17,7 @@
 
     <p class="subtitle">或是考慮聊聊這些話題</p>
 
-    <ul class="topic-list">
-      <li v-for="i in 5" :key="i" class="topic-item">List item</li>
-    </ul>
+    <TextList :texts="['台北101', '故宮博物院', '中正紀念堂', '台北車站', '西門町']" />
   </div>
 </template>
 
@@ -64,15 +62,4 @@
   margin-bottom: 10px;
 }
 
-.topic-list {
-  list-style-type: none;
-  padding: 0;
-}
-
-.topic-item {
-  background-color: #f0f0f0;
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 5px;
-}
 </style>
