@@ -8,6 +8,7 @@ import 'package:town_pass/gen/assets.gen.dart';
 // Then add MyServiceItem within MyServiceIdExt extension.
 
 enum MyServiceItemId {
+  dedicatedHistoryChat,
   dedicatedLine,
   districtOffice,
   reportIssue,
@@ -34,6 +35,13 @@ enum MyServiceItemId {
 extension MyServiceIdExt on MyServiceItemId {
   MyServiceItem get item {
     return switch (this) {
+       MyServiceItemId.dedicatedHistoryChat => MyServiceItem(
+          title: '文化時空隧道',
+          description: '文化時空隧道',
+          icon: Assets.svg.icon1999phoneS.svg(),
+          category: MyServiceCategory.cityService,
+          destinationUrl: 'https://hackmd.io/@tinf/rkOkoLooC',
+        ),
       MyServiceItemId.dedicatedLine => MyServiceItem(
           title: '1999',
           description: '播打網路語音通話',
