@@ -88,6 +88,7 @@ const get_gpt_response = async (message) => {
         <div v-if="isLoading" class="message ai-message">
           Thinking...
         </div>
+
       </div>
     </main>
 
