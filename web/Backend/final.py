@@ -111,7 +111,8 @@ async def upload_image(file: UploadFile = File(...)):
             raise HTTPException(status_code=400, detail=landmark_name)
 
         # Query the detected landmark using the query engine
-        response = explain_location(landmark_name)
+        response = query_engine.query("You're a local guide now, please give me detail introduction and history story about" + landmark_name + " as I'm a visitor never been to here, and very interest in it's history also explain all your content in chinese please.")
+
         print(response)
         return PlainTextResponse(f"Landmark: {landmark_name}\nQuery Result: {response}")
 
@@ -123,9 +124,6 @@ async def upload_image(file: UploadFile = File(...)):
         if os.path.exists(temp_image_path):
             os.remove(temp_image_path)
 
-def explain_location(location_name):
-    response = query_engine.query("You're a local guide now, please give me detail introduction and history story about" + location_name + " as I'm a visitor never been to here, and very interest in it's history also explain all your content in chinese please.")
-    return PlainTextResponse(str(response))
 
 # To run the app, use `uvicorn final:app --reload` in the terminal
 
