@@ -1,6 +1,7 @@
 import os
 import base64
 import requests
+from getLocationNearyBy import getLocFun
 from fastapi import FastAPI, File, UploadFile, HTTPException, Form
 from fastapi.responses import PlainTextResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -15,6 +16,8 @@ from llama_index.llms.gemini import Gemini
 from llama_index.embeddings.gemini import GeminiEmbedding
 import logging
 import sys
+
+from dotenv import load_dotenv
 
 # Initialize FastAPI app
 app = FastAPI()
@@ -33,9 +36,11 @@ logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
 
 # Configuration for Llama Index and Gemini API
+
+load_dotenv()
 PERSIST_DIR = "./storage"
 GEMINI_API = "AIzaSyA6aZMqy25exL1J1QHzDme1RfPpLclbdgQ"
-GOOGLE_VISION_API_KEY = "AIzaSyBugds5pFb0uDYIIyEgl4Gfr8jp0R3zb2M"  # Replace with your Google API Key
+GOOGLE_VISION_API_KEY = os.getenv('GOOGLE_VISION_API_KEY')
 
 Settings.embed_model = GeminiEmbedding(model_name="models/embedding-001", api_key=GEMINI_API)
 Settings.llm = Gemini(api_key=GEMINI_API)
@@ -134,6 +139,15 @@ async def upload_image(file: UploadFile = File(...)):
         if os.path.exists(temp_image_path):
             os.remove(temp_image_path)
 
+
+@app.get("/api/data")
+async def get_nearby_places(lat: float, lon: float, radius: int, place_type: str):
+    data = getLocFun(lat, lon, radius, place_type)
+    URLS=[]
+    for i in data:
+        URLS.append(f"https://www.google.com/maps?q={float(i['geometry']['location']['lat'])},{float(i['geometry']['location']['lng'])}")
+    print("URLS",URLS)
+    return {"places": URLS}
 
 # To run the app, use `uvicorn final:app --reload` in the terminal
 
