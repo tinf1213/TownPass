@@ -16,9 +16,9 @@ const add_user_message = async () => {
     
     // Show loading state
     isLoading.value = true;
-    
     try {
-      const gptResponse = await get_gpt_response(userMessage);
+      const gptResponse = await get_location_response(userMessage);
+      console.log(gptResponse)
       messageLists.value.push({
         type: 'ai',
         text: gptResponse
@@ -35,36 +35,24 @@ const add_user_message = async () => {
   }
 };
 
-const get_gpt_response = async (message) => {
-  const { data, error } = await useFetch(config.public.AZURE_ENDPOINT, {
+const get_location_response = async (location_name) => {
+  const formData = new FormData();
+  formData.append('location_name', location_name); // Add the key-value pair
+  console.log(formData)
+  const { data, error } = await useFetch('http://127.0.0.1:8000/query-location', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'api-key': config.public.AZURE_API_KEY
-    },
-    body: JSON.stringify({
-      messages: [
-        {
-          role: "system",
-          content: "You are an AI assistant that helps people find information."
-        },
-        {
-          role: "user",
-          content: message
-        }
-      ],
-      temperature: 0.7,
-      top_p: 0.95,
-      max_tokens: 800
-    }),
+    body: formData, // Send the form data
   });
 
   if (error.value) {
-    throw new Error(error.value.message);
+    console.error('Error during the request:', error.value);
+    return null; // Handle error appropriately
   }
-  console.log('data.value', data.value);
-  return data.value.choices[0].message.content;
+
+  return data.value; // Assuming a successful JSON response
 };
+
+
 </script>
 <template>
   <div class="container">
