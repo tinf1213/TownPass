@@ -148,7 +148,6 @@ onMounted(() => {
       </h1>
     </header>
     <main>
-      <img v-show="tempImage" :src="tempImage" class="image-preview">
       <p class="description">
         上傳照片，立即生成精彩描述；模擬歷史事件，體驗不同時代的故事；提問與討論，隨時解答您的好奇心；與歷史人物對話，感受他們的智慧與情感。讓我們一起探索台北的魅力吧！
       </p>
@@ -169,8 +168,10 @@ onMounted(() => {
         <div class="input-container-left">
           <!-- <button class="voice-input">🎤</button> -->
           <label for="image-upload" class="image-upload-label">
-            <span class="image-icon">🖼️</span>
-            <span class="upload-text">Upload Image</span>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+              <path
+                d="M19,4H5A3,3,0,0,0,2,7V17a3,3,0,0,0,3,3H19a3,3,0,0,0,3-3V7A3,3,0,0,0,19,4ZM5,6H19a1,1,0,0,1,1,1v6.39l-3.71-3.7a1,1,0,0,0-1.41,0L8.71,16H5a1,1,0,0,1-1-1V7A1,1,0,0,1,5,6ZM19,18H5l7.29-7.29L19,17.41V17A1,1,0,0,1,19,18Zm-9-6a2,2,0,1,0-2-2A2,2,0,0,0,10,12Z" />
+            </svg>
           </label>
           <input type="file" id="image-upload" class="image-upload" @change="handle_image_upload" accept="image/*">
         </div>
@@ -251,8 +252,13 @@ main {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 .user-message {
@@ -279,6 +285,7 @@ footer {
   border-radius: 20px;
   height: 100%;
   padding: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .voice-input,
@@ -300,13 +307,18 @@ footer {
 }
 
 .text-input {
-  flex-grow: 1;
-  border: none;
-  background: none;
-  padding: 10px;
+  width: 100%;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 12px;
   font-size: 16px;
+  resize: none;
+  transition: border-color 0.3s ease;
 }
-
+.text-input:focus {
+  outline: none;
+  border-color: #5fb0c9;
+}
 .send-message {
   background-color: #5fb0c9;
   color: white;
