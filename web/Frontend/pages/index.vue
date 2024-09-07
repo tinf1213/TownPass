@@ -1,4 +1,5 @@
 <script setup>
+const textList = ref([{text:'台北101', url:'https://www.google.com/maps/place/Taipei+101'}, {text:'故宮博物院', url:'https://www.google.com/maps/place/故宮博物院'}, {text:'中正紀念堂', url:'https://www.google.com/maps/place/中正紀念堂'}, {text:'台北車站', url:'https://www.google.com/maps/place/台北車站'}, {text:'西門町', url:'https://www.google.com/maps/place/西門町'}])
 // Add any necessary imports and logic here
 const nowPlace = ref(false)
 const navigate_to_chat = (location) => {
@@ -35,7 +36,7 @@ const handle_image_upload = (event) => {
     <!-- <NuxtLink to="/chat" class="primary-button">立即聊天!</NuxtLink> -->
     <div class="input-container">
       <div class="input-wrapper">
-        <textarea v-model="tempUserMessage" placeholder="輸入景點或上傳圖片" class="text-input" rows="3"></textarea>
+        <textarea v-model="tempUserMessage" placeholder="輸入景點" class="text-input" rows="3"></textarea>
         <div class="button-group">
           <label for="image-upload" class="image-upload-label">
 
@@ -51,13 +52,13 @@ const handle_image_upload = (event) => {
       </div>
     </div>
 
-    <p class="subtitle">
+    <!-- <p class="subtitle">
       您可以選擇以下地點詢問，讓我們一起探索台北的魅力！
     </p>
     <div class="location-list">
-      <TextList class="location-list-item" :texts="['台北101', '故宮博物院', '中正紀念堂', '台北車站', '西門町']"
-        @click="navigateTo('/chat?location=台北101')" />
-    </div>
+      <TextList class="location-list-item" :texts="textList"
+        @click="navigateTo(`/chat?location=${encodeURIComponent(text.url)}`)" />
+    </div> -->
     <p class="subtitle">或是</p>
     <div class="location-button-container">
       <button class="location-button" @click="nowPlace = true; navigateTo('/chat?location=國立臺灣大學')">
@@ -257,6 +258,8 @@ const handle_image_upload = (event) => {
   padding-left: 32px;
   padding-right: 32px;
   font-size: 18px;
+  text-align: center;
+  font-weight: bold;
   margin-top: 80px;
   margin-bottom: 20px;
   animation: fadeIn 1s ease-in-out 0.8s both;
@@ -265,6 +268,6 @@ const handle_image_upload = (event) => {
 .carousel-container {
   margin-top: 12px;
   margin-bottom: 20px;
-  animation: fadeIn 1s ease-in-out1s both;
+  animation: fadeIn 1s ease-in-out 1.2s both;
 }
 </style>

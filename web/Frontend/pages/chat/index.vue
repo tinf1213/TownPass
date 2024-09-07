@@ -147,12 +147,16 @@ const get_nearby_places = async () => {
       }
     });
     console.log("response", response)
+    console.log("response.data", response.data)
     // Assuming response.data contains an array of places
     places.value = response.data.places || [];
     messageLists.value.push({ text: '以下是為您推薦的附近景點', type: 'ai' });
     // console.log("testing");
     console.log("get_nearby_places");
     console.log(places.value);
+    console.log(places.value[0]);
+    console.log(places.value[0][0].link);
+    console.log(places.value[0][1].name);
 
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -217,6 +221,7 @@ const checkUrlParams = () => {
 };
 // 取得座標
 const extractCoordinates = (url) => {
+  console.log("url", url)
   const match = url.match(/q=(-?\d+\.\d+),(-?\d+\.\d+)/);
   if (match) {
     const [_, lat, lng] = match;
@@ -241,7 +246,7 @@ onMounted(() => {
 <template>
   <div class="container">
     <header>
-      <button class="menu-button">☰</button>
+      <!-- <button class="menu-button">☰</button> -->
       <h1 class="title">
         文化時空隧道
         <span class="sparkle">✨</span>
@@ -265,15 +270,13 @@ onMounted(() => {
           <div class="recommend-place">
             <div class="place-cards-container">
               <div v-for="(place, index) in places" :key="index" class="place-card">
-
-                <iframe width="100%" height="450" style="border:0;" loading="lazy" allowfullscreen
+                <div class="place-info-title">
+                  {{ place[1].name }}
+                </div>
+                <iframe width="100%" height="450" style="border:0 ;border-radius: 10px;" loading="lazy" allowfullscreen
                   referrerpolicy="no-referrer-when-downgrade"
-                  :src="`https://www.google.com/maps/embed/v1/place?key=${config.public.GOOGLE_MAPS_API_KEY}&q=${extractCoordinates(place)}`">
+                  :src="`https://www.google.com/maps/embed/v1/place?key=${config.public.GOOGLE_MAPS_API_KEY}&q=${extractCoordinates(place[0].link)}`">
                 </iframe>
-
-                <a :href="place" target="_blank">
-                  {{ place }}
-                </a>
               </div>
             </div>
           </div>
@@ -313,6 +316,8 @@ onMounted(() => {
 
 <style scoped>
 .container {
+
+  background-color: white;
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -385,13 +390,13 @@ main {
 
 .user-message {
   align-self: flex-end;
-  background-color: #EDF8FA;
+  background-color: #B4E2EA;
   animation: fadeIn 0.5s ease-in-out;
 }
 
 .ai-message {
   align-self: flex-start;
-  background-color: #f0f0f0;
+  background-color: #EDF8FA;
   animation: fadeIn 1s ease-in-out;
 }
 
@@ -423,7 +428,7 @@ main {
 }
 
 .place-card {
-  background-color: #FCF2DF;
+  background-color: #DBF1F5;
   flex: 0 0 auto;
   /* Prevent cards from shrinking */
   width: 280px;
@@ -434,6 +439,14 @@ main {
 
 .place-info {
   border-radius: 10px;
+}
+
+.place-info-title {
+  margin-top: 10px;
+  margin-bottom: 20px;
+  height: 40px;
+  font-size: 20px;
+  font-weight: bold;
 }
 
 footer {

@@ -43,9 +43,10 @@ const images = ref([
 
 .carousel-item {
   flex: 0 0 auto;
-  width: 100%;
+  width: 360px;
   height: 100%;
-  margin-right: 20px;
+  margin-left: 10px;
+  margin-right: 10px;
   background-color: #f0f0f0;
   border-radius: 3%;
 }
