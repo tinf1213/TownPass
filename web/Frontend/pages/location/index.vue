@@ -75,28 +75,34 @@ const requestLocation = () => {
 }
 
 const getNearbyPlaces = async () => {
-  isLoading.value = true
+  isLoading.value = true;
   try {
-    const response = await axios.get('http://localhost:8000/api/data', {
-      params: {
-        lat: latitude.value,
-        lon: longitude.value,
-        radius:1500,
-        place_type:"tourist_attraction"
+    // Create FormData object
+    const formData = new FormData();
+    formData.append('lat', latitude.value);
+    formData.append('lon', longitude.value);
+    formData.append('radius', 1500);
+    formData.append('place_type', 'tourist_attraction');
+
+    const response = await axios.post('http://localhost:8000/api/data', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
       }
-    })
+    });
 
     // Assuming response.data contains an array of places
-    places.value = response.data.places || []
-    messageLists.value.push({ text: 'Places fetched successfully!', type: 'ai' })
-    //console.log("testing")
-    //console.log(places.value)
+    places.value = response.data.places || [];
+    messageLists.value.push({ text: 'Places fetched successfully!', type: 'ai' });
+    // console.log("testing");
+     console.log(places.value);
 
   } catch (error) {
-    console.error('Error fetching data:', error)
-    messageLists.value.push({ text: 'Failed to fetch places', type: 'ai' })
+    console.error('Error fetching data:', error);
+    messageLists.value.push({ text: 'Failed to fetch places', type: 'ai' });
   } finally {
-    isLoading.value = false
+    isLoading.value = false;
   }
 }
+
+
 </script>
