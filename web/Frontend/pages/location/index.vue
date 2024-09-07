@@ -40,8 +40,10 @@ const locationRequested = ref(true)
 const messageLists = ref([])
 const isLoading = ref(false)
 
-onMounted(() => {
-  requestLocation()
+onMounted(async () => {
+  // requestLocation()
+  await get_current_location()
+  await getNearbyPlaces()
 })
 
 const requestLocation = () => {
@@ -84,7 +86,7 @@ const getNearbyPlaces = async () => {
     formData.append('radius', 1500);
     formData.append('place_type', 'tourist_attraction');
 
-    const response = await axios.post('http://localhost:8000/api/data', formData, {
+    const response = await axios.post('https://adaf-211-75-133-2.ngrok-free.app/api/data', formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
@@ -94,6 +96,7 @@ const getNearbyPlaces = async () => {
     places.value = response.data.places || [];
     messageLists.value.push({ text: 'Places fetched successfully!', type: 'ai' });
     // console.log("testing");
+    console.log("getNearbyPlaces2");
      console.log(places.value);
 
   } catch (error) {
@@ -104,5 +107,32 @@ const getNearbyPlaces = async () => {
   }
 }
 
+const get_current_location = async () => {
+  console.log("getNearbyPlaces2");
+  isLoading.value = true;
+  try {
+    const formData = new FormData();
+    formData.append('location_name', '台北101');
 
+    const response = await axios.post('https://adaf-211-75-133-2.ngrok-free.app/api/getLL', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+
+    // Assuming response.data contains an array of places
+    places.value = response.data.places || [];
+    messageLists.value.push({ text: 'Places fetched successfully!', type: 'ai' });
+    console.log("testing");
+    console.log(places.value);
+    latitude.value = places.value.latitude;
+    longitude.value = places.value.longitude;
+
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    messageLists.value.push({ text: 'Failed to fetch places', type: 'ai' });
+  } finally {
+    isLoading.value = false;
+  }
+}
 </script>

@@ -6,28 +6,9 @@ const messageLists = ref([]);
 const tempUserMessage = ref('');
 const tempImage = ref('');
 const isLoading = ref(false);
-const places = ref([
-  {
-    name: "台北101",
-    description: "台北101是台北市的著名地標，位於信義區，是世界上最高的摩天大樓之一。",
-    url: "https://example.com/taipei101"
-  },
-  {
-    name: "台北101",
-    description: "台北101是台北市的著名地標，位於信義區，是世界上最高的摩天大樓之一。",
-    url: "https://example.com/taipei101"
-  },
-  {
-    name: "台北101",
-    description: "台北101是台北市的著名地標，位於信義區，是世界上最高的摩天大樓之一。",
-    url: "https://example.com/taipei101"
-  },
-  {
-    name: "台北101",
-    description: "台北101是台北市的著名地標，位於信義區，是世界上最高的摩天大樓之一。",
-    url: "https://example.com/taipei101"
-  },
-]);
+const latitude = ref(0);
+const longitude = ref(0);
+const places = ref([]);
 
 const add_user_message = async () => {
   if (tempUserMessage.value.trim()) {
@@ -36,7 +17,6 @@ const add_user_message = async () => {
       text: tempUserMessage.value
     });
     const userMessage = tempUserMessage.value;
-    tempUserMessage.value = '';
 
     // Show loading state
     isLoading.value = true;
@@ -52,6 +32,8 @@ const add_user_message = async () => {
           });
         }
       }
+      await get_current_location(userMessage);
+      await get_nearby_places(userMessage);
       // getNearbyPlaces(userMessage);
     } catch (error) {
       console.error('Error getting GPT response:', error);
@@ -149,48 +131,69 @@ const get_location_response_by_image = async (image) => {
   return data.value; // Assuming a successful JSON response
 };
 
-// 取得附近地點
-const getNearbyPlaces = async (location_name) => {
-  isLoading.value = true
+const get_nearby_places = async () => {
+  isLoading.value = true;
   try {
-    const response = await axios.get('https://adaf-211-75-133-2.ngrok-free.app/api/getLL', {
-      method: 'GET',
+    // Create FormData object
+    const formData = new FormData();
+    formData.append('lat', latitude.value);
+    formData.append('lon', longitude.value);
+    formData.append('radius', 1500);
+    formData.append('place_type', 'tourist_attraction');
+
+    const response = await axios.post('https://adaf-211-75-133-2.ngrok-free.app/api/data', formData, {
       headers: {
-        'Accept': 'application/json', // Expect JSON response
-      },
-      params: {
-        location_name: location_name // Use the passed location_name
-      },
-    })
+        'Content-Type': 'multipart/form-data'
+      }
+    });
     console.log("response", response)
     // Assuming response.data contains an array of places
-    places.value = response.data.places || []
-    messageLists.value.push({ text: '以下是相近的景點!', type: 'ai' })
-    console.log("testing")
-    console.log(places.value)
-    for (const place of places.value) {
-      messageLists.value.push({ text: place.name, type: 'ai' })
-    }
+    places.value = response.data.places || [];
+    messageLists.value.push({ text: 'Places fetched successfully!', type: 'ai' });
+    // console.log("testing");
+    console.log("get_nearby_places");
+    console.log(places.value);
 
   } catch (error) {
-    console.error('Error fetching data:', error)
-    let errorMessage = '抱歉，我無法取得相近景點資訊'
-    if (error.response) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx
-      errorMessage += ` (Status: ${error.response.status})`
-    } else if (error.request) {
-      // The request was made but no response was received
-      errorMessage += ' (No response received)'
-    } else {
-      // Something happened in setting up the request that triggered an Error
-      errorMessage += ` (${error.message})`
-    }
-    messageLists.value.push({ text: errorMessage, type: 'ai' })
+    console.error('Error fetching data:', error);
+    messageLists.value.push({ text: 'Failed to fetch places', type: 'ai' });
   } finally {
-    isLoading.value = false
+    isLoading.value = false;
   }
 }
+
+const get_current_location = async (locationName) => {
+  console.log("get_current_location");
+  isLoading.value = true;
+  try {
+    const formData = new FormData();
+    formData.append('location_name', locationName);
+
+    const response = await axios.post('https://adaf-211-75-133-2.ngrok-free.app/api/getLL', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+
+    // Assuming response.data contains an array of places
+    places.value = response.data.places || [];
+    messageLists.value.push({ text: 'Places fetched successfully!', type: 'ai' });
+    console.log("testing");
+    console.log(places.value);
+    latitude.value = places.value.latitude;
+    longitude.value = places.value.longitude;
+    console.log("latitude", latitude.value);
+    console.log("longitude", longitude.value);
+    console.log("latitude", latitude.value);
+
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    messageLists.value.push({ text: 'Failed to fetch places', type: 'ai' });
+  } finally {
+    isLoading.value = false;
+  }
+}
+
 // 圖片上傳
 const handle_image_upload = (event) => {
   const file = event.target.files[0];
@@ -211,7 +214,24 @@ const checkUrlParams = () => {
     add_user_message();
   }
 };
-
+// 取得座標
+const extractCoordinates = (url) => {
+  const match = url.match(/q=(-?\d+\.\d+),(-?\d+\.\d+)/);
+  if (match) {
+    const [_, lat, lng] = match;
+    return `Latitude: ${lat}, Longitude: ${lng}`;
+  }
+  return 'Invalid coordinates';
+};
+// 取得地圖嵌入url
+const getMapEmbedUrl = (url) => {
+  const match = url.match(/q=(-?\d+\.\d+),(-?\d+\.\d+)/);
+  if (match) {
+    const [_, lat, lng] = match;
+    return `https://www.google.com/maps/embed/v1/view?key=YOUR_API_KEY&center=${lat},${lng}&zoom=15`;
+  }
+  return '';
+};
 // Modify the onMounted hook
 onMounted(() => {
   checkUrlParams();
@@ -243,11 +263,14 @@ onMounted(() => {
           <div class="place-cards-container">
             <div v-for="(place, index) in places" :key="index" class="place-card">
               <div class="place-info">
-                <h3>{{ place.name }}</h3>
-                <NuxtLink :to="place.url">
-                  <p>{{ place.url }}</p>
-                </NuxtLink>
+                {{ extractCoordinates(place) }}
               </div>
+              <iframe width="100%" height="300" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"
+                :src="'https://maps.google.com/maps?width=100%%26amp;height=300&amp;hl=zh-TW&amp;q=' + encodeURIComponent(tempUserMessage) + '&t=&z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed'"
+                allowfullscreen aria-hidden="false" tabindex="0"></iframe>
+              <iframe width="100%" height="300" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"
+                :src="'https://maps.google.com/maps?width=100%%26amp;height=300&amp;hl=zh-TW&amp;q=' + encodeURIComponent(extractCoordinates(place)) + '&t=&z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed'"
+                allowfullscreen aria-hidden="false" tabindex="0"></iframe>
             </div>
           </div>
         </div>

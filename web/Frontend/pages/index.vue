@@ -1,18 +1,9 @@
 <script setup>
 // Add any necessary imports and logic here
-const tempUserMessage = ref('');
-const tempImageFile = ref(null);
-
+const nowPlace = ref(false)
 const navigate_to_chat = (location) => {
-  if (tempImageFile.value) {
-    // If there's an image, use a data URL
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const dataUrl = e.target.result;
-      navigateTo(`/chat?image=${encodeURIComponent(dataUrl)}`);
-    };
-    reader.readAsDataURL(tempImageFile.value);
-    tempImageFile.value = null;
+  if (nowPlace) {
+    navigateTo(`/chat?location=${encodeURIComponent(location)}`);
   } else {
     // If there's no image, just navigate with the location
     navigateTo(`/chat?location=${encodeURIComponent(location)}`);
@@ -69,7 +60,7 @@ const handle_image_upload = (event) => {
     </div>
     <p class="subtitle">或是</p>
     <div class="location-button-container">
-      <button class="location-button" @click="navigate_to_chat(tempUserMessage)">
+      <button class="location-button" @click="nowPlace = true; navigateTo('/chat?location=台北101')">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
           <path
             d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
@@ -274,6 +265,6 @@ const handle_image_upload = (event) => {
 .carousel-container {
   margin-top: 12px;
   margin-bottom: 20px;
-  animation: fadeIn 1s ease-in-out 1s both;
+  animation: fadeIn 1s ease-in-out1s both;
 }
 </style>
