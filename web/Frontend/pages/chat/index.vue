@@ -4,7 +4,6 @@ const config = useRuntimeConfig();
 const messageLists = ref([]);
 const tempUserMessage = ref('');
 const tempImage = ref('');
-
 const isLoading = ref(false);
 
 const add_user_message = async () => {
@@ -20,11 +19,16 @@ const add_user_message = async () => {
     isLoading.value = true;
     try {
       const gptResponse = await get_location_response(userMessage);
-      console.log(gptResponse)
-      messageLists.value.push({
-        type: 'ai',
-        text: gptResponse
-      });
+      console.log(gptResponse);
+      const responseLines = gptResponse.split('\n');
+      for (const line of responseLines) {
+        if (line.trim()) {  // Check if the line is not empty or just whitespace
+          messageLists.value.push({
+            type: 'ai',
+            text: line
+          });
+        }
+      }
     } catch (error) {
       console.error('Error getting GPT response:', error);
       messageLists.value.push({
@@ -38,26 +42,30 @@ const add_user_message = async () => {
 };
 
 const add_image_message = async (tempImage) => {
-  console.log("add_image_message", tempImage.value)
   if (tempImage.value) {
-    // Create a blob from the Uint8Array
-    const blob = new Blob([tempImage.value], { type: 'application/octet-stream' });
-    
     messageLists.value.push({
       type: 'user',
-      image: URL.createObjectURL(blob) // Create a URL for display
+      image: URL.createObjectURL(tempImage.value)
     });
 
     // Show loading state
     isLoading.value = true;
     try {
-      const gptResponse = await get_location_response_by_image(blob);
+      const gptResponse = ref(await get_location_response_by_image(tempImage.value));
+      console.log(gptResponse);
+      // Remove "Landmark: Taipei 101 Observatory" and "Query Result:" from the response
+      const cleanedResponse = gptResponse.value.replace(/^Landmark:.*\n/, '').replace(/^Query Result:\s*/, '');
+      gptResponse.value = cleanedResponse;
+      const responseLines = gptResponse.value.split('\n');
+      for (const line of responseLines) {
+        if (line.trim()) {  // Check if the line is not empty or just whitespace
+          messageLists.value.push({
+            type: 'ai',
+            text: line
+          });
+        }
+      }
 
-      console.log(gptResponse)
-      messageLists.value.push({
-        type: 'ai',
-        text: gptResponse
-      });
     } catch (error) {
       console.error('Error getting GPT response:', error);
       messageLists.value.push({
@@ -69,7 +77,6 @@ const add_image_message = async (tempImage) => {
     }
   }
   // Clear the tempImage
-
   tempImage.value = null;
 };
 
@@ -96,17 +103,16 @@ const get_location_response = async (location_name) => {
 };
 
 const get_location_response_by_image = async (image) => {
+  console.log("image", image)
+
   const formData = new FormData();
-  formData.append('file', image, 'image.bin'); // Append as binary file
-
-  console.log(formData)
-
+  formData.append('file', image);
+  console.log("formData", formData)
   const { data, error } = await useFetch('https://adaf-211-75-133-2.ngrok-free.app/upload-image', {
     method: 'POST',
     headers: {
       'Accept': 'text/plain', // Expect plain text response
     },
-
     body: formData, // Send the form data
   });
 
@@ -126,13 +132,12 @@ const handle_image_upload = (event) => {
   const reader = new FileReader();
   reader.readAsArrayBuffer(file);
   reader.onload = () => {
-    const arrayBuffer = reader.result;
-    const uint8Array = new Uint8Array(arrayBuffer);
-    tempImage.value = uint8Array;
+    tempImage.value = file;
     add_image_message(tempImage);
   };
 };
 
+// 取得url參數，
 const checkUrlParams = () => {
   const route = useRoute();
   const location = route.query.location;
@@ -146,7 +151,6 @@ const checkUrlParams = () => {
 onMounted(() => {
   checkUrlParams();
 })
-
 </script>
 <template>
   <div class="container">
@@ -157,7 +161,6 @@ onMounted(() => {
         <span class="sparkle">✨</span>
       </h1>
     </header>
-
     <main>
       <p class="description">
         上傳照片，立即生成精彩描述；模擬歷史事件，體驗不同時代的故事；提問與討論，隨時解答您的好奇心；與歷史人物對話，感受他們的智慧與情感。讓我們一起探索台北的魅力吧！
@@ -169,7 +172,7 @@ onMounted(() => {
           <img v-if="message.image" :src="message.image" class="message-image">
         </div>
         <div v-if="isLoading" class="message ai-message">
-          Thinking...
+          思考中...
         </div>
       </div>
     </main>
@@ -179,8 +182,10 @@ onMounted(() => {
         <div class="input-container-left">
           <!-- <button class="voice-input">🎤</button> -->
           <label for="image-upload" class="image-upload-label">
-            <span class="image-icon">🖼️</span>
-            <span class="upload-text">Upload Image</span>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+              <path
+                d="M19,4H5A3,3,0,0,0,2,7V17a3,3,0,0,0,3,3H19a3,3,0,0,0,3-3V7A3,3,0,0,0,19,4ZM5,6H19a1,1,0,0,1,1,1v6.39l-3.71-3.7a1,1,0,0,0-1.41,0L8.71,16H5a1,1,0,0,1-1-1V7A1,1,0,0,1,5,6ZM19,18H5l7.29-7.29L19,17.41V17A1,1,0,0,1,19,18Zm-9-6a2,2,0,1,0-2-2A2,2,0,0,0,10,12Z" />
+            </svg>
           </label>
           <input type="file" id="image-upload" class="image-upload" @change="handle_image_upload" accept="image/*">
         </div>
@@ -212,7 +217,6 @@ header {
   align-items: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-
 }
 
 .menu-button {
@@ -262,22 +266,25 @@ main {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 .user-message {
   align-self: flex-end;
   background-color: #e6f3ff;
   animation: fadeIn 0.5s ease-in-out;
-
 }
 
 .ai-message {
   align-self: flex-start;
   background-color: #f0f0f0;
   animation: fadeIn 1s ease-in-out;
-
 }
 
 footer {
@@ -292,6 +299,7 @@ footer {
   border-radius: 20px;
   height: 100%;
   padding: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .voice-input,
@@ -313,11 +321,18 @@ footer {
 }
 
 .text-input {
-  flex-grow: 1;
-  border: none;
-  background: none;
-  padding: 10px;
+  width: 100%;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 12px;
   font-size: 16px;
+  resize: none;
+  transition: border-color 0.3s ease;
+}
+
+.text-input:focus {
+  outline: none;
+  border-color: #5fb0c9;
 }
 
 .send-message {
