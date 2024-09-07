@@ -2,6 +2,8 @@ import os
 import base64
 import requests
 from getLocationNearyBy import getLocFun
+from LocationToLL import get_lat_lng
+
 from fastapi import FastAPI, File, UploadFile, HTTPException, Form
 from fastapi.responses import PlainTextResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -148,6 +150,12 @@ async def get_nearby_places(lat: float, lon: float, radius: int, place_type: str
         URLS.append(f"https://www.google.com/maps?q={float(i['geometry']['location']['lat'])},{float(i['geometry']['location']['lng'])}")
     print("URLS",URLS)
     return {"places": URLS}
+
+@app.get("/api/getLL")
+async def getLLfun(location_name: str):
+    latitude, longitude = get_lat_lng(location_name)
+    print(f"纬度: {latitude}, 经度: {longitude}")
+    return {"places": {"latitude": latitude, "longitude": longitude}}
 
 # To run the app, use `uvicorn final:app --reload` in the terminal
 
