@@ -3,6 +3,7 @@ import base64
 import requests
 from fastapi import FastAPI, File, UploadFile, HTTPException, Form
 from fastapi.responses import PlainTextResponse
+from fastapi.middleware.cors import CORSMiddleware
 from llama_index.core import (
     Settings,
     VectorStoreIndex,
@@ -17,6 +18,15 @@ import sys
 
 # Initialize FastAPI app
 app = FastAPI()
+
+origins = ["*"]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # # Setup logging
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
