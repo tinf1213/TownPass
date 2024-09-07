@@ -65,6 +65,7 @@ const add_image_message = async (tempImage) => {
           });
         }
       }
+      
     } catch (error) {
       console.error('Error getting GPT response:', error);
       messageLists.value.push({
@@ -171,7 +172,7 @@ onMounted(() => {
           <img v-if="message.image" :src="message.image" class="message-image">
         </div>
         <div v-if="isLoading" class="message ai-message">
-          Thinking...
+          思考中...
         </div>
       </div>
     </main>

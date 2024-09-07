@@ -55,8 +55,9 @@ const handle_image_upload = (event) => {
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
               <path d="M19,4H5A3,3,0,0,0,2,7V17a3,3,0,0,0,3,3H19a3,3,0,0,0,3-3V7A3,3,0,0,0,19,4ZM5,6H19a1,1,0,0,1,1,1v6.39l-3.71-3.7a1,1,0,0,0-1.41,0L8.71,16H5a1,1,0,0,1-1-1V7A1,1,0,0,1,5,6ZM19,18H5l7.29-7.29L19,17.41V17A1,1,0,0,1,19,18Zm-9-6a2,2,0,1,0-2-2A2,2,0,0,0,10,12Z"/>
             </svg>
+            辨識一下這是哪?
           </label>
-          <input type="file" id="image-upload" class="image-upload" @change="handle_image_upload" accept="image/*">
+          <input id="image-upload" class="image-upload"  @click="navigateTo('/chat')" accept="image/*">
           <button class="send-button" @click="navigate_to_chat(tempUserMessage)">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
               <path d="M2,21L23,12L2,3V10L17,12L2,14V21Z" />
@@ -182,7 +183,17 @@ const handle_image_upload = (event) => {
   width: 90%;
 }
 
-.image-upload-label,
+.image-upload-label{
+  background-color: #5fb0c9;
+  display: flex;
+  color: white;
+  width: 60%;
+  height: 40px;  border-radius: 12px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
 .send-button {
   background-color: #5fb0c9;
   color: white;
