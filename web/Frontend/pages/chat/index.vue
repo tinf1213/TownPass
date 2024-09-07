@@ -17,7 +17,7 @@ const add_user_message = async () => {
       text: tempUserMessage.value
     });
     const userMessage = tempUserMessage.value;
-
+    tempUserMessage.value = '';
     // Show loading state
     isLoading.value = true;
     try {
@@ -34,7 +34,6 @@ const add_user_message = async () => {
       }
       await get_current_location(userMessage);
       await get_nearby_places(userMessage);
-      // getNearbyPlaces(userMessage);
     } catch (error) {
       console.error('Error getting GPT response:', error);
       messageLists.value.push({
@@ -71,6 +70,7 @@ const add_image_message = async (tempImage) => {
           });
         }
       }
+
 
     } catch (error) {
       console.error('Error getting GPT response:', error);
@@ -149,7 +149,7 @@ const get_nearby_places = async () => {
     console.log("response", response)
     // Assuming response.data contains an array of places
     places.value = response.data.places || [];
-    messageLists.value.push({ text: 'Places fetched successfully!', type: 'ai' });
+    messageLists.value.push({ text: '以下是為您推薦的附近景點', type: 'ai' });
     // console.log("testing");
     console.log("get_nearby_places");
     console.log(places.value);
@@ -164,6 +164,7 @@ const get_nearby_places = async () => {
 
 const get_current_location = async (locationName) => {
   console.log("get_current_location");
+  console.log(locationName)
   isLoading.value = true;
   try {
     const formData = new FormData();
@@ -171,13 +172,13 @@ const get_current_location = async (locationName) => {
 
     const response = await axios.post('https://adaf-211-75-133-2.ngrok-free.app/api/getLL', formData, {
       headers: {
-        'Content-Type': 'multipart/form-data'
+        'Content-Type': 'multipart/form-data',
+        'Access-Control-Allow-Origin': '*',
       }
     });
 
     // Assuming response.data contains an array of places
     places.value = response.data.places || [];
-    messageLists.value.push({ text: 'Places fetched successfully!', type: 'ai' });
     console.log("testing");
     console.log(places.value);
     latitude.value = places.value.latitude;
@@ -219,7 +220,7 @@ const extractCoordinates = (url) => {
   const match = url.match(/q=(-?\d+\.\d+),(-?\d+\.\d+)/);
   if (match) {
     const [_, lat, lng] = match;
-    return `Latitude: ${lat}, Longitude: ${lng}`;
+    return `${lat},${lng}`;
   }
   return 'Invalid coordinates';
 };
@@ -256,21 +257,24 @@ onMounted(() => {
           {{ message.text }}
           <img v-if="message.image" :src="message.image" class="message-image">
         </div>
-        <div class="recommend-place-title">
-          <h3>推薦的附近景點</h3>
-        </div>
-        <div class="recommend-place">
-          <div class="place-cards-container">
-            <div v-for="(place, index) in places" :key="index" class="place-card">
-              <div class="place-info">
-                {{ extractCoordinates(place) }}
+
+        <div class="" v-if="!isLoading">
+          <div class="recommend-place-title">
+            <h3>推薦的附近景點</h3>
+          </div>
+          <div class="recommend-place">
+            <div class="place-cards-container">
+              <div v-for="(place, index) in places" :key="index" class="place-card">
+
+                <iframe width="100%" height="450" style="border:0;" loading="lazy" allowfullscreen
+                  referrerpolicy="no-referrer-when-downgrade"
+                  :src="`https://www.google.com/maps/embed/v1/place?key=${config.public.GOOGLE_MAPS_API_KEY}&q=${extractCoordinates(place)}`">
+                </iframe>
+
+                <a :href="place" target="_blank">
+                  {{ place }}
+                </a>
               </div>
-              <iframe width="100%" height="300" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"
-                :src="'https://maps.google.com/maps?width=100%%26amp;height=300&amp;hl=zh-TW&amp;q=' + encodeURIComponent(tempUserMessage) + '&t=&z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed'"
-                allowfullscreen aria-hidden="false" tabindex="0"></iframe>
-              <iframe width="100%" height="300" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"
-                :src="'https://maps.google.com/maps?width=100%%26amp;height=300&amp;hl=zh-TW&amp;q=' + encodeURIComponent(extractCoordinates(place)) + '&t=&z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed'"
-                allowfullscreen aria-hidden="false" tabindex="0"></iframe>
             </div>
           </div>
         </div>
@@ -422,7 +426,7 @@ main {
   background-color: #FCF2DF;
   flex: 0 0 auto;
   /* Prevent cards from shrinking */
-  width: 250px;
+  width: 280px;
   /* Set a fixed width for each card */
   padding: 10px;
   border-radius: 10px;
