@@ -93,3 +93,4 @@ wrapt==1.16.0
 yarl==1.9.11
 fastapi
 python-dotenv
+python-multipart

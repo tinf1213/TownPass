@@ -1,10 +1,33 @@
 <script setup>
+import axios from 'axios';
 const config = useRuntimeConfig();
 
 const messageLists = ref([]);
 const tempUserMessage = ref('');
 const tempImage = ref('');
 const isLoading = ref(false);
+const places = ref([
+  {
+    name: "台北101",
+    description: "台北101是台北市的著名地標，位於信義區，是世界上最高的摩天大樓之一。",
+    url: "https://example.com/taipei101"
+  },
+  {
+    name: "台北101",
+    description: "台北101是台北市的著名地標，位於信義區，是世界上最高的摩天大樓之一。",
+    url: "https://example.com/taipei101"
+  },
+  {
+    name: "台北101",
+    description: "台北101是台北市的著名地標，位於信義區，是世界上最高的摩天大樓之一。",
+    url: "https://example.com/taipei101"
+  },
+  {
+    name: "台北101",
+    description: "台北101是台北市的著名地標，位於信義區，是世界上最高的摩天大樓之一。",
+    url: "https://example.com/taipei101"
+  },
+]);
 
 const add_user_message = async () => {
   if (tempUserMessage.value.trim()) {
@@ -29,6 +52,7 @@ const add_user_message = async () => {
           });
         }
       }
+      // getNearbyPlaces(userMessage);
     } catch (error) {
       console.error('Error getting GPT response:', error);
       messageLists.value.push({
@@ -83,6 +107,7 @@ const add_image_message = async (tempImage) => {
 
 // 取得地點回應
 const get_location_response = async (location_name) => {
+  console.log("location_name", location_name)
   const formData = new FormData();
   formData.append('location_name', location_name); // Add the key-value pair
   console.log(formData)
@@ -124,8 +149,48 @@ const get_location_response_by_image = async (image) => {
   return data.value; // Assuming a successful JSON response
 };
 
+// 取得附近地點
+const getNearbyPlaces = async (location_name) => {
+  isLoading.value = true
+  try {
+    const response = await axios.get('https://adaf-211-75-133-2.ngrok-free.app/api/getLL', {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json', // Expect JSON response
+      },
+      params: {
+        location_name: location_name // Use the passed location_name
+      },
+    })
+    console.log("response", response)
+    // Assuming response.data contains an array of places
+    places.value = response.data.places || []
+    messageLists.value.push({ text: '以下是相近的景點!', type: 'ai' })
+    console.log("testing")
+    console.log(places.value)
+    for (const place of places.value) {
+      messageLists.value.push({ text: place.name, type: 'ai' })
+    }
 
-
+  } catch (error) {
+    console.error('Error fetching data:', error)
+    let errorMessage = '抱歉，我無法取得相近景點資訊'
+    if (error.response) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx
+      errorMessage += ` (Status: ${error.response.status})`
+    } else if (error.request) {
+      // The request was made but no response was received
+      errorMessage += ' (No response received)'
+    } else {
+      // Something happened in setting up the request that triggered an Error
+      errorMessage += ` (${error.message})`
+    }
+    messageLists.value.push({ text: errorMessage, type: 'ai' })
+  } finally {
+    isLoading.value = false
+  }
+}
 // 圖片上傳
 const handle_image_upload = (event) => {
   const file = event.target.files[0];
@@ -170,6 +235,21 @@ onMounted(() => {
           :class="['message', message.type === 'user' ? 'user-message' : 'ai-message']">
           {{ message.text }}
           <img v-if="message.image" :src="message.image" class="message-image">
+        </div>
+        <div class="recommend-place-title">
+          <h3>推薦的附近景點</h3>
+        </div>
+        <div class="recommend-place">
+          <div class="place-cards-container">
+            <div v-for="(place, index) in places" :key="index" class="place-card">
+              <div class="place-info">
+                <h3>{{ place.name }}</h3>
+                <NuxtLink :to="place.url">
+                  <p>{{ place.url }}</p>
+                </NuxtLink>
+              </div>
+            </div>
+          </div>
         </div>
         <div v-if="isLoading" class="message ai-message">
           思考中...
@@ -244,6 +324,7 @@ main {
 .description {
   font-size: 16px;
   line-height: 1.5;
+  animation: fadeIn 0.5s ease-in-out;
 }
 
 .message-container {
@@ -277,7 +358,7 @@ main {
 
 .user-message {
   align-self: flex-end;
-  background-color: #e6f3ff;
+  background-color: #EDF8FA;
   animation: fadeIn 0.5s ease-in-out;
 }
 
@@ -285,6 +366,47 @@ main {
   align-self: flex-start;
   background-color: #f0f0f0;
   animation: fadeIn 1s ease-in-out;
+}
+
+.recommend-place-title {
+  margin-top: 12px;
+  border-radius: 10px;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.recommend-place {
+  padding: 10px;
+  margin-top: 4px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  overflow-x: auto;
+  /* Enable horizontal scrolling */
+}
+
+
+.place-cards-container {
+  display: flex;
+  flex-direction: row;
+  /* Ensure cards are in a row */
+  gap: 10px;
+  /* Space between cards */
+  padding-bottom: 10px;
+  /* Add some padding at the bottom for scrollbar */
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+.place-card {
+  background-color: #FCF2DF;
+  flex: 0 0 auto;
+  /* Prevent cards from shrinking */
+  width: 250px;
+  /* Set a fixed width for each card */
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.place-info {
+  border-radius: 10px;
 }
 
 footer {
@@ -299,6 +421,8 @@ footer {
   border-radius: 20px;
   height: 100%;
   padding: 5px;
+  padding-left: 20px;
+  padding-right: 20px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
@@ -321,7 +445,7 @@ footer {
 }
 
 .text-input {
-  width: 100%;
+  width: full;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   padding: 12px;
@@ -350,7 +474,7 @@ footer {
   display: flex;
   align-items: center;
   cursor: pointer;
-  padding: 5px 10px;
+  padding: 5px 5px;
   background-color: #5fb0c9;
   color: white;
   border-radius: 15px;
