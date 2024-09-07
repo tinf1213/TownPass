@@ -1,10 +1,12 @@
 <script setup>
+import axios from 'axios';
 const config = useRuntimeConfig();
 
 const messageLists = ref([]);
 const tempUserMessage = ref('');
 const tempImage = ref('');
 const isLoading = ref(false);
+const places = ref([]);
 
 const add_user_message = async () => {
   if (tempUserMessage.value.trim()) {
@@ -29,6 +31,7 @@ const add_user_message = async () => {
           });
         }
       }
+      getNearbyPlaces(userMessage);
     } catch (error) {
       console.error('Error getting GPT response:', error);
       messageLists.value.push({
@@ -83,6 +86,7 @@ const add_image_message = async (tempImage) => {
 
 // 取得地點回應
 const get_location_response = async (location_name) => {
+  console.log("location_name", location_name)
   const formData = new FormData();
   formData.append('location_name', location_name); // Add the key-value pair
   console.log(formData)
@@ -124,8 +128,29 @@ const get_location_response_by_image = async (image) => {
   return data.value; // Assuming a successful JSON response
 };
 
+// 取得附近地點
+const getNearbyPlaces = async (location_name) => {
+  isLoading.value = true
+  try {
+    const response = await axios.get('https://adaf-211-75-133-2.ngrok-free.app/api/getLL', {
+      params: {
+        location_name: location_name
+      }
+    })
+    console.log("response", response)
+    // Assuming response.data contains an array of places
+    places.value = response.data.places || []
+    messageLists.value.push({ text: 'Places fetched successfully!', type: 'ai' })
+    console.log("testing")
+    console.log(places.value)
 
-
+  } catch (error) {
+    console.error('Error fetching data:', error)
+    messageLists.value.push({ text: 'Failed to fetch places', type: 'ai' })
+  } finally {
+    isLoading.value = false
+  }
+}
 // 圖片上傳
 const handle_image_upload = (event) => {
   const file = event.target.files[0];

@@ -13,3 +13,4 @@ export const getLocation = () => {
     error.value = "瀏覽器不支援 Geolocation"
   }
 }
+
