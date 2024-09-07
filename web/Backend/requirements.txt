@@ -91,3 +91,5 @@ uritemplate==4.1.1
 urllib3==2.2.2
 wrapt==1.16.0
 yarl==1.9.11
+fastapi
+python-dotenv
