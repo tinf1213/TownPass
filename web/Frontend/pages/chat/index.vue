@@ -19,11 +19,16 @@ const add_user_message = async () => {
     isLoading.value = true;
     try {
       const gptResponse = await get_location_response(userMessage);
-      console.log(gptResponse)
-      messageLists.value.push({
-        type: 'ai',
-        text: gptResponse
-      });
+      console.log(gptResponse);
+      const responseLines = gptResponse.split('\n');
+      for (const line of responseLines) {
+        if (line.trim()) {  // Check if the line is not empty or just whitespace
+          messageLists.value.push({
+            type: 'ai',
+            text: line
+          });
+        }
+      }
     } catch (error) {
       console.error('Error getting GPT response:', error);
       messageLists.value.push({
@@ -46,12 +51,20 @@ const add_image_message = async (tempImage) => {
     // Show loading state
     isLoading.value = true;
     try {
-      const gptResponse = await get_location_response_by_image(tempImage.value);
-      console.log(gptResponse)
-      messageLists.value.push({
-        type: 'ai',
-        text: gptResponse
-      });
+      const gptResponse = ref(await get_location_response_by_image(tempImage.value));
+      console.log(gptResponse);
+      // Remove "Landmark: Taipei 101 Observatory" and "Query Result:" from the response
+      const cleanedResponse = gptResponse.value.replace(/^Landmark:.*\n/, '').replace(/^Query Result:\s*/, '');
+      gptResponse.value = cleanedResponse;
+      const responseLines = gptResponse.value.split('\n');
+      for (const line of responseLines) {
+        if (line.trim()) {  // Check if the line is not empty or just whitespace
+          messageLists.value.push({
+            type: 'ai',
+            text: line
+          });
+        }
+      }
     } catch (error) {
       console.error('Error getting GPT response:', error);
       messageLists.value.push({
@@ -315,10 +328,12 @@ footer {
   resize: none;
   transition: border-color 0.3s ease;
 }
+
 .text-input:focus {
   outline: none;
   border-color: #5fb0c9;
 }
+
 .send-message {
   background-color: #5fb0c9;
   color: white;

@@ -1,6 +1,32 @@
 <script setup>
 // Add any necessary imports and logic here
+const tempUserMessage = ref('');
+const tempImageFile = ref(null);
 
+const navigate_to_chat = (location) => {
+  if (tempImageFile.value) {
+    // If there's an image, use a data URL
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const dataUrl = e.target.result;
+      navigateTo(`/chat?image=${encodeURIComponent(dataUrl)}`);
+    };
+    reader.readAsDataURL(tempImageFile.value);
+    tempImageFile.value = null;
+  } else {
+    // If there's no image, just navigate with the location
+    navigateTo(`/chat?location=${encodeURIComponent(location)}`);
+  }
+}
+
+const handle_image_upload = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    tempImageFile.value = file;
+    tempUserMessage.value = file.name;
+    navigate_to_chat(tempUserMessage.value);
+  }
+}
 </script>
 
 <template>
@@ -31,7 +57,7 @@
             </svg>
           </label>
           <input type="file" id="image-upload" class="image-upload" @change="handle_image_upload" accept="image/*">
-          <button class="send-button" @click="add_user_message">
+          <button class="send-button" @click="navigate_to_chat(tempUserMessage)">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
               <path d="M2,21L23,12L2,3V10L17,12L2,14V21Z" />
             </svg>
@@ -43,7 +69,7 @@
       您可以選擇以下地點詢問，讓我們一起探索台北的魅力！
     </p>
     <div class="location-list">
-      <TextList :texts="['台北101', '故宮博物院', '中正紀念堂', '台北車站', '西門町']" @click="navigateTo('/chat?location=台北101')" />
+      <TextList class="location-list-item" :texts="['台北101', '故宮博物院', '中正紀念堂', '台北車站', '西門町']" @click="navigateTo('/chat?location=台北101')" />
     </div>
     <p class="subtitle">或是考慮聊聊這些話題</p>
     <div class="carousel-container">
@@ -187,7 +213,9 @@
   margin-bottom: 20px;
   animation: fadeIn 1s ease-in-out 0.8s both;
 }
-
+.location-list-item {
+  cursor: pointer;
+}
 .subtitle {
   padding-left: 32px;
   padding-right: 32px;
