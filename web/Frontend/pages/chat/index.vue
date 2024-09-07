@@ -3,7 +3,8 @@ const config = useRuntimeConfig();
 
 const messageLists = ref([]);
 const tempUserMessage = ref('');
-const tempImage = ref(null);
+const tempImage = ref('');
+
 const isLoading = ref(false);
 
 const add_user_message = async () => {
@@ -36,19 +37,22 @@ const add_user_message = async () => {
   }
 };
 
-const add_image_message = async () => {
+const add_image_message = async (tempImage) => {
   console.log("add_image_message", tempImage.value)
   if (tempImage.value) {
+    // Create a blob from the Uint8Array
+    const blob = new Blob([tempImage.value], { type: 'application/octet-stream' });
+    
     messageLists.value.push({
       type: 'user',
-      image: tempImage.value
+      image: URL.createObjectURL(blob) // Create a URL for display
     });
 
-    const userMessage = tempImage.value;
     // Show loading state
     isLoading.value = true;
     try {
-      const gptResponse = await get_location_response_by_image(userMessage);
+      const gptResponse = await get_location_response_by_image(blob);
+
       console.log(gptResponse)
       messageLists.value.push({
         type: 'ai',
@@ -64,7 +68,8 @@ const add_image_message = async () => {
       isLoading.value = false;
     }
   }
-  // 清空
+  // Clear the tempImage
+
   tempImage.value = null;
 };
 
@@ -92,11 +97,16 @@ const get_location_response = async (location_name) => {
 
 const get_location_response_by_image = async (image) => {
   const formData = new FormData();
-  formData.append('image', image, image.name); // Append the file with its name
+  formData.append('file', image, 'image.bin'); // Append as binary file
+
   console.log(formData)
 
   const { data, error } = await useFetch('https://adaf-211-75-133-2.ngrok-free.app/upload-image', {
     method: 'POST',
+    headers: {
+      'Accept': 'text/plain', // Expect plain text response
+    },
+
     body: formData, // Send the form data
   });
 
@@ -113,11 +123,30 @@ const get_location_response_by_image = async (image) => {
 // 圖片上傳
 const handle_image_upload = (event) => {
   const file = event.target.files[0];
-  if (file) {
-    tempImage.value = URL.createObjectURL(file);
-    add_image_message();
+  const reader = new FileReader();
+  reader.readAsArrayBuffer(file);
+  reader.onload = () => {
+    const arrayBuffer = reader.result;
+    const uint8Array = new Uint8Array(arrayBuffer);
+    tempImage.value = uint8Array;
+    add_image_message(tempImage);
+  };
+};
+
+const checkUrlParams = () => {
+  const route = useRoute();
+  const location = route.query.location;
+  if (location) {
+    tempUserMessage.value = location;
+    add_user_message();
   }
 };
+
+// Modify the onMounted hook
+onMounted(() => {
+  checkUrlParams();
+})
+
 </script>
 <template>
   <div class="container">
@@ -181,7 +210,9 @@ const handle_image_upload = (event) => {
 header {
   display: flex;
   align-items: center;
-  padding: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
 }
 
 .menu-button {
@@ -230,14 +261,23 @@ main {
   border-radius: 10px;
 }
 
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 .user-message {
   align-self: flex-end;
   background-color: #e6f3ff;
+  animation: fadeIn 0.5s ease-in-out;
+
 }
 
 .ai-message {
   align-self: flex-start;
   background-color: #f0f0f0;
+  animation: fadeIn 1s ease-in-out;
+
 }
 
 footer {
