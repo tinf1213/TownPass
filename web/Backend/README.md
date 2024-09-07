@@ -1,8 +1,9 @@
 # 安裝環境
-推薦使用 venv
-(optional) python -m venv LLM
-(optional) source LLM/bin/activate (linux)
-pip install -r requirment.txt
+推薦使用 venv "\n"
+(optional) python -m venv LLM "\n"
+(optional) source LLM/bin/activate (linux) "\n"
+
+pip install -r requirements.txt "\n"
 
 # 開始服務
 若 docs 有更新，請刪除 storage 重新 embed

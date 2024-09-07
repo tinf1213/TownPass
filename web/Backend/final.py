@@ -3,6 +3,7 @@ import base64
 import requests
 from fastapi import FastAPI, File, UploadFile, HTTPException, Form
 from fastapi.responses import PlainTextResponse
+from fastapi.middleware.cors import CORSMiddleware
 from llama_index.core import (
     Settings,
     VectorStoreIndex,
@@ -17,6 +18,15 @@ import sys
 
 # Initialize FastAPI app
 app = FastAPI()
+
+origins = ["*"]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # # Setup logging
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
@@ -111,7 +121,8 @@ async def upload_image(file: UploadFile = File(...)):
             raise HTTPException(status_code=400, detail=landmark_name)
 
         # Query the detected landmark using the query engine
-        response = explain_location(landmark_name)
+        response = query_engine.query("You're a local guide now, please give me detail introduction and history story about" + landmark_name + " as I'm a visitor never been to here, and very interest in it's history also explain all your content in chinese please.")
+
         print(response)
         return PlainTextResponse(f"Landmark: {landmark_name}\nQuery Result: {response}")
 
@@ -123,9 +134,6 @@ async def upload_image(file: UploadFile = File(...)):
         if os.path.exists(temp_image_path):
             os.remove(temp_image_path)
 
-def explain_location(location_name):
-    response = query_engine.query("You're a local guide now, please give me detail introduction and history story about" + location_name + " as I'm a visitor never been to here, and very interest in it's history also explain all your content in chinese please.")
-    return PlainTextResponse(str(response))
 
 # To run the app, use `uvicorn final:app --reload` in the terminal
 

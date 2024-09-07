@@ -6,10 +6,7 @@
         android:label="Town Pass"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
-        android:usesCleartextTraffic="true"
         >
-     
-        <!-- 啟用混合內容（如 HTTP 和 HTTPS 的混合使用） -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -65,4 +62,7 @@
             <action android:name="android.support.customtabs.action.CustomTabsService" />
         </intent>
     </queries>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
 </manifest>
