@@ -16,6 +16,8 @@ from llama_index.embeddings.gemini import GeminiEmbedding
 import logging
 import sys
 
+from dotenv import load_dotenv
+
 # Initialize FastAPI app
 app = FastAPI()
 
@@ -33,9 +35,11 @@ logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
 
 # Configuration for Llama Index and Gemini API
+
+load_dotenv()
 PERSIST_DIR = "./storage"
 GEMINI_API = "AIzaSyA6aZMqy25exL1J1QHzDme1RfPpLclbdgQ"
-GOOGLE_VISION_API_KEY = "AIzaSyBugds5pFb0uDYIIyEgl4Gfr8jp0R3zb2M"  # Replace with your Google API Key
+GOOGLE_VISION_API_KEY = os.getenv('GOOGLE_VISION_API_KEY')
 
 Settings.embed_model = GeminiEmbedding(model_name="models/embedding-001", api_key=GEMINI_API)
 Settings.llm = Gemini(api_key=GEMINI_API)
