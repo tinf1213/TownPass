@@ -62,7 +62,7 @@ query_engine = index.as_query_engine()
 # Function to query location using the query engine
 @app.post("/query-location")
 async def query_location(location_name: str = Form(...)):
-    response = query_engine.query("現在你是一名當地導遊，請向我介紹" + landmark_name + "，不用說明情境，直接講解該景點的特色與歷史，越鉅細靡遺越好")
+    response = query_engine.query("現在你是一名當地導遊，請向我介紹" + location_name + "，不用說明情境，直接講解該景點的特色與歷史，越鉅細靡遺越好")
     return PlainTextResponse(str(response))
 
 
