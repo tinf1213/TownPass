@@ -15,6 +15,7 @@ from llama_index.llms.gemini import Gemini
 from llama_index.embeddings.gemini import GeminiEmbedding
 import logging
 import sys
+
 from dotenv import load_dotenv
 
 # Initialize FastAPI app
@@ -34,6 +35,7 @@ logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
 
 # Configuration for Llama Index and Gemini API
+
 load_dotenv()
 PERSIST_DIR = "./storage"
 GEMINI_API = "AIzaSyA6aZMqy25exL1J1QHzDme1RfPpLclbdgQ"

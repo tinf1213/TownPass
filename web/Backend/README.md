@@ -2,6 +2,7 @@
 推薦使用 venv "\n"
 (optional) python -m venv LLM "\n"
 (optional) source LLM/bin/activate (linux) "\n"
+
 pip install -r requirements.txt "\n"
 
 # 開始服務
