@@ -8,11 +8,14 @@
       文化時空隧道
       <span class="sparkle">✨</span>
     </h1>
-    
+
     <p class="description">
       上傳照片，立即生成精彩描述；模擬歷史事件，體驗不同時代的故事；提問與討論，隨時解答您的好奇心；與歷史人物對話，感受他們的智慧與情感。讓我們一起探索台北的魅力吧！
     </p>
-    <Carousel />
+    <div class="carousel-container">
+      <Carousel />
+    </div>
+    
     <NuxtLink to="/chat" class="primary-button">立即使用!</NuxtLink>
 
     <p class="subtitle">或是考慮聊聊這些話題</p>
@@ -43,6 +46,10 @@
 .description {
   font-size: 16px;
   line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.carousel-container {
   margin-bottom: 20px;
 }
 

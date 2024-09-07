@@ -2,9 +2,9 @@
 import { ref } from 'vue';
 
 const images = ref([
-  { src: 'https://cdn.vuetifyjs.com/images/cards/sunshine.jpg', alt: 'Image 1 Description' },
-  { src: 'https://cdn.vuetifyjs.com/images/cards/docks.jpg', alt: 'Image 2 Description' },
-  { src: 'https://cdn.vuetifyjs.com/images/cards/mountain.jpg', alt: 'Image 3 Description' },
+  { link: 'image/Taipei_101_Tower_E_0.jpg', alt: 'Taipei 101 Tower' },
+  { link: 'image/Taipei_101_Tower_E_0.jpg', alt: 'Taipei 101 Tower' },
+  { link: 'image/Taipei_101_Tower_E_0.jpg', alt: 'Taipei 101 Tower' },
 ]);
 </script>
 
@@ -12,41 +12,35 @@ const images = ref([
   <div class="carousel">
     <div class="carousel-inner">
       <div v-for="(image, index) in images" :key="index" class="carousel-item">
-        <img :src="image.src" :alt="image.alt" class="d-block w-100" />
+        <img :src="image.link" :alt="image.alt" />
       </div>
     </div>
   </div>
 </template>
+
 <style scoped>
 .carousel {
   width: 100%;
   height: 400px;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .carousel-inner {
-  width: 100%;
+  display: flex;
   height: 100%;
-  position: relative;
 }
 
 .carousel-item {
+  flex: 0 0 auto;
   width: 100%;
   height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  opacity: 0;
-  transition: opacity 0.5s ease-in-out;
+  margin-right: 20px;
 }
 
 .carousel-item img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-}
-
-.carousel-item.active {
-  opacity: 1;
 }
 </style>
