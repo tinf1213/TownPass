@@ -15,7 +15,7 @@
 
 
     <NuxtLink to="/chat" class="primary-button">立即使用!</NuxtLink>
-
+    <NuxtLink to="/test" class="primary-button">測試</NuxtLink>
     <p class="subtitle">或是考慮聊聊這些話題</p>
     <div class="carousel-container">
       <Carousel />

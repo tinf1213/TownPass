@@ -37,20 +37,16 @@ const add_user_message = async () => {
 };
 
 const add_image_message = async (tempImage) => {
-  console.log("add_image_message", tempImage.value)
   if (tempImage.value) {
-    // Create a blob from the Uint8Array
-    const blob = new Blob([tempImage.value], { type: 'application/octet-stream' });
-    
     messageLists.value.push({
       type: 'user',
-      image: URL.createObjectURL(blob) // Create a URL for display
+      image: URL.createObjectURL(tempImage.value)
     });
 
     // Show loading state
     isLoading.value = true;
     try {
-      const gptResponse = await get_location_response_by_image(blob);
+      const gptResponse = await get_location_response_by_image(tempImage.value);
       console.log(gptResponse)
       messageLists.value.push({
         type: 'ai',
@@ -93,10 +89,11 @@ const get_location_response = async (location_name) => {
 };
 
 const get_location_response_by_image = async (image) => {
-  const formData = new FormData();
-  formData.append('file', image, 'image.bin'); // Append as binary file
-  console.log(formData)
+  console.log("image", image)
 
+  const formData = new FormData();
+  formData.append('file', image);
+  console.log("formData", formData)
   const { data, error } = await useFetch('https://adaf-211-75-133-2.ngrok-free.app/upload-image', {
     method: 'POST',
     headers: {
@@ -121,13 +118,12 @@ const handle_image_upload = (event) => {
   const reader = new FileReader();
   reader.readAsArrayBuffer(file);
   reader.onload = () => {
-    const arrayBuffer = reader.result;
-    const uint8Array = new Uint8Array(arrayBuffer);
-    tempImage.value = uint8Array;
+    tempImage.value = file;
     add_image_message(tempImage);
   };
 };
 
+// 取得url參數，
 const checkUrlParams = () => {
   const route = useRoute();
   const location = route.query.location;
@@ -151,8 +147,8 @@ onMounted(() => {
         <span class="sparkle">✨</span>
       </h1>
     </header>
-
     <main>
+      <img v-show="tempImage" :src="tempImage" class="image-preview">
       <p class="description">
         上傳照片，立即生成精彩描述；模擬歷史事件，體驗不同時代的故事；提問與討論，隨時解答您的好奇心；與歷史人物對話，感受他們的智慧與情感。讓我們一起探索台北的魅力吧！
       </p>
