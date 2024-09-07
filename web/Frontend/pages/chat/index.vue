@@ -3,7 +3,9 @@ const config = useRuntimeConfig();
 
 const messageLists = ref([]);
 const tempUserMessage = ref('');
+const tempImage = ref(null);
 const isLoading = ref(false);
+const imagePreview = ref(null);
 
 const add_user_message = async () => {
   if (tempUserMessage.value.trim()) {
@@ -35,11 +37,12 @@ const add_user_message = async () => {
   }
 };
 
+// 取得地點回應
 const get_location_response = async (location_name) => {
   const formData = new FormData();
   formData.append('location_name', location_name); // Add the key-value pair
   console.log(formData)
-  const { data, error } = await useFetch('http://127.0.0.1:8000/query-location', {
+  const { data, error } = await useFetch('https://66c7-211-23-28-230.ngrok-free.app/query-location', {
     method: 'POST',
     body: formData, // Send the form data
   });
@@ -53,6 +56,13 @@ const get_location_response = async (location_name) => {
 };
 
 
+// 圖片上傳
+const handle_image_upload = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    imagePreview.value = URL.createObjectURL(file);
+  }
+};
 </script>
 <template>
   <div class="container">
@@ -76,21 +86,30 @@ const get_location_response = async (location_name) => {
         <div v-if="isLoading" class="message ai-message">
           Thinking...
         </div>
-
       </div>
     </main>
 
     <footer>
       <div class="input-container">
-        <button class="voice-input">🎤</button>
-        <button class="image-upload">🖼️</button>
-        <input type="text" placeholder="輸入訊息" class="text-input" v-model="tempUserMessage"
-          @keyup.enter="add_user_message">
-        <button class="send-message" @click="add_user_message" style="color: white;"><svg
-            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <div class="input-container-left">
+          <button class="voice-input">🎤</button>
+          <label for="image-upload" class="image-upload-label">
+            <span class="image-icon">🖼️</span>
+            <span class="upload-text">Upload Image</span>
+          </label>
+          <input type="file" id="image-upload" class="image-upload" @change="handle_image_upload" accept="image/*">
+        </div>  
+        <div class="input-container-middle">
+          <img v-show"imagePreview" :src="imagePreview" class="image-preview">
+          <input type="text" placeholder="輸入訊息" class="text-input" v-model="tempUserMessage">
+        </div>
+
+        <div class="send-message" @click="add_user_message" style="color: white;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <title>send</title>
             <path d="M2,21L23,12L2,3V10L17,12L2,14V21Z" />
-          </svg></button>
+          </svg>
+        </div>
       </div>
     </footer>
   </div>
@@ -166,14 +185,25 @@ footer {
 .input-container {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   background-color: #f0f0f0;
   border-radius: 20px;
+  height: 100%;
   padding: 5px;
 }
 
 .voice-input,
-.image-upload,
+.image-upload {
+  width: 40px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 5px;
+}
+
 .send-message {
+  width: 40px;
   background: none;
   border: none;
   font-size: 20px;
@@ -198,5 +228,65 @@ footer {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.image-upload-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 5px 10px;
+  background-color: #5fb0c9;
+  color: white;
+  border-radius: 15px;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.input-container-left {
+  height: 100%;
+  margin-right: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.input-container-middle {
+  height: 100%;
+  margin-right: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-upload-label:hover {
+  background-color: #4a8fa5;
+}
+
+.image-icon {
+  margin-right: 5px;
+}
+
+.upload-text {
+  display: none;
+}
+
+.image-upload {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .upload-text {
+    display: inline;
+  }
+}
+
+.image-preview {
+  max-width: 100px;
+  max-height: 40px;
+  object-fit: cover;
+  margin-right: 10px;
+  border-radius: 5px;
 }
 </style>

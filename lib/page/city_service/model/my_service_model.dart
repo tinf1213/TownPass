@@ -40,7 +40,7 @@ extension MyServiceIdExt on MyServiceItemId {
           description: '這是文化時空隧道',
           icon: Assets.svg.iconTaipeiRadio.svg(),
           category: MyServiceCategory.cityService,
-          destinationUrl: 'http://172.19.32.1:3000',
+          destinationUrl: 'https://f02e-61-216-248-248.ngrok-free.app',
         ),
       MyServiceItemId.dedicatedLine => MyServiceItem(
           title: '1999',
