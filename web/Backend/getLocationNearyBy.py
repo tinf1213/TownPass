@@ -29,6 +29,4 @@ def getLocFun(latitude,longitude,radius,type):
         print(f"Error: {response.status_code}")
         print(response.text)
     return data['results'][:5]
-#getLocationNearyBy.py:`
-
-`
+#getLocationNearyBy.py:
