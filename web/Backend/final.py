@@ -37,7 +37,7 @@ logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
 load_dotenv()
 PERSIST_DIR = "./storage"
 GEMINI_API = "AIzaSyA6aZMqy25exL1J1QHzDme1RfPpLclbdgQ"
-GOOGLE_VISION_API_KEY = os.getenv('CLOUD_VISION_API_KEY')
+GOOGLE_VISION_API_KEY = os.getenv('GOOGLE_VISION_API_KEY')
 
 Settings.embed_model = GeminiEmbedding(model_name="models/embedding-001", api_key=GEMINI_API)
 Settings.llm = Gemini(api_key=GEMINI_API)
