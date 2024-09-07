@@ -14,11 +14,14 @@ export default defineNuxtConfig({
           content: '文化時空隧道'
         },
       ],
+      link: [
+        { rel: 'icon', type: 'image/png', href: '/icon.png' }
+      ]
     },
   },
-  devtools: { enabled: false },
+  devtools: { enabled: true },
   devServer: {
-    host: '192.168.88.152',
+    host: '0.0.0.0', // 监听所有接口，包括 127.0.0.1
     port: 3000
   },
   runtimeConfig: {
