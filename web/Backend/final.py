@@ -60,7 +60,7 @@ query_engine = index.as_query_engine()
 # Function to query location using the query engine
 @app.post("/query-location")
 async def query_location(location_name: str = Form(...)):
-    response = query_engine.query("You're a local guide now, please give me detail introduction and history story about" + location_name + " as I'm a visitor never been to here, and very interest in it's history also explain all your content in chinese please.")
+    response = query_engine.query("現在你是一名當地導遊，請向我介紹" + landmark_name + "，不用說明情境，直接講解該景點的特色與歷史，越鉅細靡遺越好")
     return PlainTextResponse(str(response))
 
 
@@ -126,7 +126,7 @@ async def upload_image(file: UploadFile = File(...)):
             raise HTTPException(status_code=400, detail=landmark_name)
 
         # Query the detected landmark using the query engine
-        response = query_engine.query("You're a local guide now, please give me detail introduction and history story about" + landmark_name + " as I'm a visitor never been to here, and very interest in it's history also explain all your content in chinese please.")
+        response = query_engine.query("現在你是一名當地導遊，請向我介紹" + landmark_name + "，不用說明情境，直接講解該景點的特色與歷史，越鉅細靡遺越好")
 
         print(response)
         return PlainTextResponse(f"Landmark: {landmark_name}\nQuery Result: {response}")
