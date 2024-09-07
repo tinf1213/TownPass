@@ -1,6 +1,7 @@
 import os
 import base64
 import requests
+from getLocationNearyBy import getLocFun
 from fastapi import FastAPI, File, UploadFile, HTTPException, Form
 from fastapi.responses import PlainTextResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -138,6 +139,15 @@ async def upload_image(file: UploadFile = File(...)):
         if os.path.exists(temp_image_path):
             os.remove(temp_image_path)
 
+
+@app.get("/api/data")
+async def get_nearby_places(lat: float, lon: float, radius: int, place_type: str):
+    data = getLocFun(lat, lon, radius, place_type)
+    URLS=[]
+    for i in data:
+        URLS.append(f"https://www.google.com/maps?q={float(i['geometry']['location']['lat'])},{float(i['geometry']['location']['lng'])}")
+    print("URLS",URLS)
+    return {"places": URLS}
 
 # To run the app, use `uvicorn final:app --reload` in the terminal
 
