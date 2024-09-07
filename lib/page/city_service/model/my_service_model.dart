@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:town_pass/gen/assets.gen.dart';
-
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 // 先於 MyServiceItemId enum 加入新服務；
 // 再在 MyServiceIdExt 擴充中加入該服務的 MyServiceItem 物件。
 //
@@ -8,6 +8,7 @@ import 'package:town_pass/gen/assets.gen.dart';
 // Then add MyServiceItem within MyServiceIdExt extension.
 
 enum MyServiceItemId {
+  dedicatedHistoryChat,
   dedicatedHistoryChat,
   dedicatedLine,
   districtOffice,
@@ -41,6 +42,13 @@ extension MyServiceIdExt on MyServiceItemId {
           icon: Assets.svg.iconTaipeiRadio.svg(),
           category: MyServiceCategory.cityService,
           destinationUrl: 'http://192.168.88.159:3000/',
+        ),
+      MyServiceItemId.dedicatedHistoryChat => MyServiceItem(
+          title: '文化時空隧道',
+          description: '這是文化時空隧道',
+          icon: Assets.svg.iconTaipeiRadio.svg(),
+          category: MyServiceCategory.cityService,
+          destinationUrl: 'http://172.18.137.56:3000/',
         ),
       MyServiceItemId.dedicatedLine => MyServiceItem(
           title: '1999',

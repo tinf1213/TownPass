@@ -1,3 +1,4 @@
+
 <!-- 全域樣式 -->
 <style>
 /* 頁面過渡動畫 */
@@ -8,6 +9,6 @@
 </style>
 <template>
   <div>
-    <NuxtPage />
+    <NuxtPage/>
   </div>
 </template>
