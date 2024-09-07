@@ -19,7 +19,7 @@ export default defineNuxtConfig({
       ]
     },
   },
-  devtools: { enabled: true },
+  devtools: { enabled: false },
   devServer: {
     host: '0.0.0.0', // 监听所有接口，包括 127.0.0.1
     port: 3000

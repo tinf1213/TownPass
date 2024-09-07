@@ -44,20 +44,13 @@ const handle_image_upload = (event) => {
     <!-- <NuxtLink to="/chat" class="primary-button">立即聊天!</NuxtLink> -->
     <div class="input-container">
       <div class="input-wrapper">
-        <textarea
-          v-model="tempUserMessage"
-          placeholder="輸入景點或上傳圖片"
-          class="text-input"
-          rows="3"
-        ></textarea>
+        <textarea v-model="tempUserMessage" placeholder="輸入景點或上傳圖片" class="text-input" rows="3"></textarea>
         <div class="button-group">
           <label for="image-upload" class="image-upload-label">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-              <path d="M19,4H5A3,3,0,0,0,2,7V17a3,3,0,0,0,3,3H19a3,3,0,0,0,3-3V7A3,3,0,0,0,19,4ZM5,6H19a1,1,0,0,1,1,1v6.39l-3.71-3.7a1,1,0,0,0-1.41,0L8.71,16H5a1,1,0,0,1-1-1V7A1,1,0,0,1,5,6ZM19,18H5l7.29-7.29L19,17.41V17A1,1,0,0,1,19,18Zm-9-6a2,2,0,1,0-2-2A2,2,0,0,0,10,12Z"/>
-            </svg>
-            辨識一下這是哪?
+
+            直接進入聊天室!
           </label>
-          <input id="image-upload" class="image-upload"  @click="navigateTo('/chat')" accept="image/*">
+          <input id="image-upload" class="image-upload" @click="navigateTo('/chat')" accept="image/*">
           <button class="send-button" @click="navigate_to_chat(tempUserMessage)">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
               <path d="M2,21L23,12L2,3V10L17,12L2,14V21Z" />
@@ -66,11 +59,21 @@ const handle_image_upload = (event) => {
         </div>
       </div>
     </div>
+    <div class="location-button-container">
+      <button class="location-button" @click="navigate_to_chat(tempUserMessage)">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+          <path
+            d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+        </svg>
+        尋找附近景點
+      </button>
+    </div>
     <p class="subtitle">
       您可以選擇以下地點詢問，讓我們一起探索台北的魅力！
     </p>
     <div class="location-list">
-      <TextList class="location-list-item" :texts="['台北101', '故宮博物院', '中正紀念堂', '台北車站', '西門町']" @click="navigateTo('/chat?location=台北101')" />
+      <TextList class="location-list-item" :texts="['台北101', '故宮博物院', '中正紀念堂', '台北車站', '西門町']"
+        @click="navigateTo('/chat?location=台北101')" />
     </div>
     <p class="subtitle">或是考慮聊聊這些話題</p>
     <div class="carousel-container">
@@ -85,7 +88,7 @@ const handle_image_upload = (event) => {
   max-width: 600px;
   margin: 0 auto;
   font-family: Arial, sans-serif;
-  animation: fadeIn 1s ease-in-out;
+  animation: fadeIn 0.7s ease-in-out;
 }
 
 @keyframes fadeIn {
@@ -106,7 +109,7 @@ const handle_image_upload = (event) => {
   font-weight: bold;
   margin-top: 32px;
   margin-bottom: 20px;
-  animation: fadeIn 1s ease-in-out 0.2s both;
+  animation: fadeIn 0.7s ease-in-out 0.2s both;
 }
 
 .sparkle {
@@ -123,7 +126,7 @@ const handle_image_upload = (event) => {
   font-size: 20px;
   line-height: 1.5;
   margin-bottom: 20px;
-  animation: fadeIn 1s ease-in-out 0.4s both;
+  animation: fadeIn 0.7s ease-in-out 0.4s both;
 }
 
 .primary-button {
@@ -139,7 +142,7 @@ const handle_image_upload = (event) => {
   font-size: 20px;
   cursor: pointer;
   margin-left: auto;
-  animation: fadeIn 1s ease-in-out 0.6s both;
+  animation: fadeIn 0.7s ease-in-out 0.6s both;
 }
 
 .input-container {
@@ -150,7 +153,7 @@ const handle_image_upload = (event) => {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   width: 90%;
   max-width: 600px;
-  animation: fadeIn 1s ease-in-out 0.8s both;
+  animation: fadeIn 0.7s ease-in-out 0.8s both;
 }
 
 .input-wrapper {
@@ -183,17 +186,19 @@ const handle_image_upload = (event) => {
   width: 90%;
 }
 
-.image-upload-label{
+.image-upload-label {
   background-color: #5fb0c9;
   display: flex;
   color: white;
   width: 60%;
-  height: 40px;  border-radius: 12px;
+  height: 40px;
+  border-radius: 12px;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
+
 .send-button {
   background-color: #5fb0c9;
   color: white;
@@ -213,6 +218,31 @@ const handle_image_upload = (event) => {
   background-color: #4a8fa5;
 }
 
+.location-button-container {
+  padding-left: 32px;
+  padding-right: 32px;
+  margin-top: 40px;
+  margin-bottom: 20px;
+  animation: fadeIn 1s ease-in-out 0.8s both;
+}
+
+.location-button {
+  background-color: #738995;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 20px;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  width: 90%;
+  max-width: 600px;
+  text-align: center;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
 .image-upload {
   display: none;
 }
@@ -224,9 +254,11 @@ const handle_image_upload = (event) => {
   margin-bottom: 20px;
   animation: fadeIn 1s ease-in-out 0.8s both;
 }
+
 .location-list-item {
   cursor: pointer;
 }
+
 .subtitle {
   padding-left: 32px;
   padding-right: 32px;
