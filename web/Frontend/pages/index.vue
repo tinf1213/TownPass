@@ -7,6 +7,7 @@
     <h1 class="title">
       文化時空隧道
       <!-- <span class="sparkle">✨</span> -->
+
     </h1>
 
     <p class="description">
@@ -23,6 +24,7 @@
     <!-- <TextList :texts="['台北101', '故宮博物院', '中正紀念堂', '台北車站', '西門町']" /> -->
   </div>
 </template>
+
 <style scoped>
 .container {
   max-width: 600px;
@@ -44,6 +46,7 @@
   margin-top: 32px;
   margin-bottom: 20px;
   animation: fadeIn 1s ease-in-out 0.2s both;
+
 }
 
 .sparkle {
@@ -90,5 +93,6 @@
   margin-top: 12px;
   margin-bottom: 20px;
   animation: fadeIn 1s ease-in-out 1s both;
+
 }
 </style>
