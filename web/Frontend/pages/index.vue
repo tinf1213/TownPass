@@ -59,6 +59,15 @@ const handle_image_upload = (event) => {
         </div>
       </div>
     </div>
+
+    <p class="subtitle">
+      您可以選擇以下地點詢問，讓我們一起探索台北的魅力！
+    </p>
+    <div class="location-list">
+      <TextList class="location-list-item" :texts="['台北101', '故宮博物院', '中正紀念堂', '台北車站', '西門町']"
+        @click="navigateTo('/chat?location=台北101')" />
+    </div>
+    <p class="subtitle">或是</p>
     <div class="location-button-container">
       <button class="location-button" @click="navigate_to_chat(tempUserMessage)">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
@@ -68,14 +77,7 @@ const handle_image_upload = (event) => {
         尋找附近景點
       </button>
     </div>
-    <p class="subtitle">
-      您可以選擇以下地點詢問，讓我們一起探索台北的魅力！
-    </p>
-    <div class="location-list">
-      <TextList class="location-list-item" :texts="['台北101', '故宮博物院', '中正紀念堂', '台北車站', '西門町']"
-        @click="navigateTo('/chat?location=台北101')" />
-    </div>
-    <p class="subtitle">或是考慮聊聊這些話題</p>
+    <p class="subtitle">或是看看這些景點</p>
     <div class="carousel-container">
       <Carousel />
     </div>
@@ -147,6 +149,7 @@ const handle_image_upload = (event) => {
 
 .input-container {
   padding: 20px;
+
   margin: 20px auto;
   background-color: #f8f8f8;
   border-radius: 12px;

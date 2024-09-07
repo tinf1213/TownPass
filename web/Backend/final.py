@@ -142,17 +142,25 @@ async def upload_image(file: UploadFile = File(...)):
             os.remove(temp_image_path)
 
 
-@app.get("/api/data")
-async def get_nearby_places(lat: float, lon: float, radius: int, place_type: str):
+@app.post("/api/data")
+async def get_nearby_places(
+    lat: float = Form(...),
+    lon: float = Form(...),
+    radius: int = Form(...),
+    place_type: str = Form(...)
+):
+    # Get the data from the function
     data = getLocFun(lat, lon, radius, place_type)
-    URLS=[]
-    for i in data:
-        URLS.append(f"https://www.google.com/maps?q={float(i['geometry']['location']['lat'])},{float(i['geometry']['location']['lng'])}")
-    print("URLS",URLS)
-    return {"places": URLS}
+    urls=[]
+    # Create a list of Google Maps URLs based on the locations
+    for place in data:
+        urls.append(f"https://www.google.com/maps?q={place['geometry']['location']['lat']},{place['geometry']['location']['lng']}")
+        #print(f"https://www.google.com/maps?q={place['geometry']['location']['lat']},{place['geometry']['location']['lng']}")
+    print("testing")
+    return {"places": urls}
 
-@app.get("/api/getLL")
-async def getLLfun(location_name: str):
+@app.post("/api/getLL")
+async def getLLfun(location_name: str = Form(...)):
     latitude, longitude = get_lat_lng(location_name)
     print(f"纬度: {latitude}, 经度: {longitude}")
     return {"places": {"latitude": latitude, "longitude": longitude}}
