@@ -54,7 +54,7 @@ const images = ref([
 .carousel-item img {
   border-radius: 3%;
   width: 100%;
-  height: 280px;
+  height: 240px;
   object-fit: cover;
 }
 

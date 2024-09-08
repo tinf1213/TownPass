@@ -1,5 +1,5 @@
 <script setup>
-const textList = ref([{text:'台北101', url:'https://www.google.com/maps/place/Taipei+101'}, {text:'故宮博物院', url:'https://www.google.com/maps/place/故宮博物院'}, {text:'中正紀念堂', url:'https://www.google.com/maps/place/中正紀念堂'}, {text:'台北車站', url:'https://www.google.com/maps/place/台北車站'}, {text:'西門町', url:'https://www.google.com/maps/place/西門町'}])
+const textList = ref([{ text: '台北101', url: 'https://www.google.com/maps/place/Taipei+101' }, { text: '故宮博物院', url: 'https://www.google.com/maps/place/故宮博物院' }, { text: '中正紀念堂', url: 'https://www.google.com/maps/place/中正紀念堂' }, { text: '台北車站', url: 'https://www.google.com/maps/place/台北車站' }, { text: '西門町', url: 'https://www.google.com/maps/place/西門町' }])
 // Add any necessary imports and logic here
 const nowPlace = ref(false)
 const navigate_to_chat = (location) => {
@@ -25,7 +25,7 @@ const handle_image_upload = (event) => {
   <div class="container">
     <h1 class="title">
       <div class="sparkle">✨</div>
-      文化時空隧道
+      台北景點之眼
     </h1>
 
     <p class="description">
@@ -66,10 +66,10 @@ const handle_image_upload = (event) => {
           <path
             d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
         </svg>
-        尋找附近景點
+        尋找附近的景點
       </button>
     </div>
-    <p class="subtitle">或是看看這些景點</p>
+    <p class="subtitle">或是看看這些景點的精采歷史</p>
     <div class="carousel-container">
       <Carousel />
     </div>
@@ -190,6 +190,7 @@ const handle_image_upload = (event) => {
   border-radius: 12px;
   align-items: center;
   justify-content: center;
+  font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
@@ -216,8 +217,8 @@ const handle_image_upload = (event) => {
 .location-button-container {
   padding-left: 32px;
   padding-right: 32px;
-  margin-top: 40px;
-  margin-bottom: 20px;
+  margin-top: 4px;
+  margin-bottom: 60px;
   animation: fadeIn 1s ease-in-out 0.8s both;
 }
 
@@ -234,6 +235,8 @@ const handle_image_upload = (event) => {
   max-width: 600px;
   text-align: center;
   font-size: 18px;
+  font-weight: bold;
+
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
