@@ -45,7 +45,13 @@ const add_user_message = async () => {
     }
   }
 };
-
+const extractLandmark = (text) => {
+  const match = text.match(/Landmark: (.*?)\nQuery/);
+  if (match && match[1]) {
+    return match[1].trim();
+  }
+  return null;
+};
 const add_image_message = async (tempImage) => {
   if (tempImage.value) {
     messageLists.value.push({
@@ -57,6 +63,9 @@ const add_image_message = async (tempImage) => {
     isLoading.value = true;
     try {
       const gptResponse = ref(await get_location_response_by_image(tempImage.value));
+      const landmark = extractLandmark(gptResponse.value);
+      console.log("Extracted landmark:", landmark);
+
       console.log(gptResponse);
       // Remove "Landmark: Taipei 101 Observatory" and "Query Result:" from the response
       const cleanedResponse = gptResponse.value.replace(/^Landmark:.*\n/, '').replace(/^Query Result:\s*/, '');
@@ -70,8 +79,12 @@ const add_image_message = async (tempImage) => {
           });
         }
       }
-
-
+      if (landmark) {
+        await get_current_location(landmark);
+        await get_nearby_places(landmark);
+      } else {
+        console.error("No landmark extracted from the response");
+      }
     } catch (error) {
       console.error('Error getting GPT response:', error);
       messageLists.value.push({
@@ -248,13 +261,14 @@ onMounted(() => {
     <header>
       <!-- <button class="menu-button">☰</button> -->
       <h1 class="title">
-        文化時空隧道
+        台北景點之眼
         <span class="sparkle">✨</span>
       </h1>
     </header>
     <main>
       <p class="description">
-        上傳照片，立即生成精彩描述；模擬歷史事件，體驗不同時代的故事；提問與討論，隨時解答您的好奇心；與歷史人物對話，感受他們的智慧與情感。讓我們一起探索台北的魅力吧！
+        上傳照片，立即生成精彩描述；提問與討論，隨時解答您的好奇心。讓我們一起探索台北的魅力吧！
+
       </p>
       <div class="message-container">
         <div v-for="(message, index) in messageLists" :key="index"
