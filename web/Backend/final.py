@@ -153,8 +153,11 @@ async def get_nearby_places(
     data = getLocFun(lat, lon, radius, place_type)
     urls=[]
     # Create a list of Google Maps URLs based on the locations
-    for place in data:
-        urls.append(f"https://www.google.com/maps?q={place['geometry']['location']['lat']},{place['geometry']['location']['lng']}")
+    for i in data:
+        urls.append((
+            {"link": f"https://www.google.com/maps?q={float(i['geometry']['location']['lat'])},{float(i['geometry']['location']['lng'])}"},
+            {"name": i['name']}
+        ))
         #print(f"https://www.google.com/maps?q={place['geometry']['location']['lat']},{place['geometry']['location']['lng']}")
     print("testing")
     return {"places": urls}
@@ -165,5 +168,24 @@ async def getLLfun(location_name: str = Form(...)):
     print(f"纬度: {latitude}, 经度: {longitude}")
     return {"places": {"latitude": latitude, "longitude": longitude}}
 
+@app.post("/api/getLocationName")
+async def getLocationName(lat: float = Form(...), lon: float = Form(...)):
+    location_name = get_location_name(lat, lon)
+    return {"location_name": location_name}
+
+# Function to get the location name based on latitude and longitude
+def get_location_name(latitude, longitude):
+    """Use Google Maps Geocoding API to get the location name based on latitude and longitude."""
+    url = f"https://maps.googleapis.com/maps/api/geocode/json?latlng={latitude},{longitude}&key={GOOGLE_VISION_API_KEY}"
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        if data["results"]:
+            location_name = data["results"][0]["formatted_address"]
+            return location_name
+        else:
+            return "Location not found."
+    else:
+        return f"Error: {response.status_code}, {response.text}"
 # To run the app, use `uvicorn final:app --reload` in the terminal
 
